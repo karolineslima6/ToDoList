@@ -1,35 +1,33 @@
+package ex13;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
-
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-
 public class Tela_To_Do_List extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Tela_To_Do_List.class.getName());
-    
+
     DefaultTableModel model;
-    
+
     private static final String CONCLUIDA = "Concluida";
     private static final String NAO_CONCLUIDA = "Não concluida";
-    
+
     private final ArrayList<String> tarefas = new ArrayList<>();
     private final ArrayList<String> tarefasFiltradas = new ArrayList<>();
-   
+
     public Tela_To_Do_List() {
         initComponents();
-        
-        setLocationRelativeTo(null); 
-        
+
+        setLocationRelativeTo(null);
+
         model = (DefaultTableModel) jTableTarefas.getModel();
-        
+
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -79,6 +77,7 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
         jButtonConcluirTarefa.setText("Concluir");
 
         jButtonRemoverTarefa.setText("Remover");
+        jButtonRemoverTarefa.addActionListener(this::jButtonRemoverTarefaActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -87,9 +86,6 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -104,6 +100,10 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonRemoverTarefa)
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,12 +114,12 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
                     .addComponent(jButtonAdicionarTarefa))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBoxFiltroStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonConcluirTarefa)
-                    .addComponent(jButtonRemoverTarefa))
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonRemoverTarefa)
+                    .addComponent(jButtonConcluirTarefa))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -127,57 +127,124 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonAdicionarTarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAdicionarTarefaActionPerformed
-        if (jTextFieldDescricaoTarefa.getText().trim().isEmpty()){
+        if (jTextFieldDescricaoTarefa.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "A descrição não pode ser vazia");
             return;
         }
-        
-        if (hasTarefaRepedida(jTextFieldDescricaoTarefa.getText())){
+
+        if (hasTarefaRepedida(jTextFieldDescricaoTarefa.getText())) {
             JOptionPane.showMessageDialog(null, " A tarefa" + jTextFieldDescricaoTarefa.getText() + "já existe!");
             return;
         }
-        
+
         tarefas.add(jTextFieldDescricaoTarefa.getText() + ";" + NAO_CONCLUIDA);
-        
+
         preencherTabela();
-        
+
         jTextFieldDescricaoTarefa.setText("");
-        
+
     }//GEN-LAST:event_jButtonAdicionarTarefaActionPerformed
-    public boolean hasTarefaRepedida (String novaTarefas) {
-        for (String tarefa : tarefas){
-        String dados[] = tarefa.split(";");
-    
-        if  (novaTarefa.toLowerCase().equals(dados[0].toLowerCase())){
-            return true;
+
+    private void jButtonRemoverTarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoverTarefaActionPerformed
+        int linhaSelecionada = jTableTarefas.getSelectedRow();
+
+        if (linhaSelecionada < 0) {
+            JOptionPane.showMessageDialog(null, "Nenhuma tarefa foi selecionada");
+            return;
         }
-        } 
+
+        int opcao = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir a tarefa?");
+
+        String tarefaSelecionada = recuperarTarefa(linhaSelecionada);
+
+        int indiceTarefaSelecionada = tarefas.indexOf(tarefaSelecionada);
+
+        if (opcao == JOptionPane.YES_OPTION) {
+            tarefas.remove(indiceTarefaSelecionada);
+            preencherTabela();
+        }
+
+        filtraTabela();
+
+        preencherTabela();
+    }//GEN-LAST:event_jButtonRemoverTarefaActionPerformed
+
+    private void filtraTabela() {
+        int opcao = jComboBoxFiltroStatus.getSelectedIndex();
+        tarefasFiltradas.clear();
+
+        String[] dados;
+
+        for (String tarefa : tarefas) {
+            dados = tarefa.split(";");
+
+            switch (opcao) {
+                case 0:
+                    tarefasFiltradas.add(tarefa);
+                    break;
+                case 1:
+                    if (dados[1].equals(CONCLUIDA)) {
+                        tarefasFiltradas.add(tarefa);
+                    }
+                    
+                    break;
+                    
+                case 2:
+                    if (dados[1].equals(NAO_CONCLUIDA)){
+                        tarefasFiltradas.add(tarefa);
+                    }
+                    
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+
+        }
+
+    }
+
+    private String recuperarTarefa(int indiceTarefa) {
+        if (jComboBoxFiltroStatus.getSelectedIndex() > 0) {
+            return tarefasFiltradas.get(indiceTarefa);
+
+        } else {
+            return tarefas.get(indiceTarefa);
+        }
+    }
+
+    public boolean hasTarefaRepedida(String novaTarefa) {
+        for (String tarefa : tarefas) {
+            String dados[] = tarefa.split(";");
+
+            if (novaTarefa.toLowerCase().equals(dados[0].toLowerCase())) {
+                return true;
+            }
+        }
         return false;
     }
-    
-    private void preencherTabela(){
+
+    private void preencherTabela() {
         ArrayList<String> listaTarefas;
-        if (jComboBoxFiltroStatus.getSelectedIndex() > 0){
+        if (jComboBoxFiltroStatus.getSelectedIndex() > 0) {
             listaTarefas = tarefasFiltradas;
-        }else{
+        } else {
             listaTarefas = tarefas;
         }
-        
+
         model.setRowCount(0);
-        
-        for (String tarefa : listaTarefas){
-            String[]dados = tarefa.split(";");
-            
+
+        for (String tarefa : listaTarefas) {
+            String[] dados = tarefa.split(";");
+
             model.addRow(new Object[]{
                 dados[0],
                 dados[1]
-                
-                
-                
+
             });
-            
+
         }
     }
+
     /**
      * @param args the command line arguments
      */
