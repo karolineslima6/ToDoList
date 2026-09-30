@@ -52,6 +52,8 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
         jButtonAdicionarTarefa.addActionListener(this::jButtonAdicionarTarefaActionPerformed);
 
         jComboBoxFiltroStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Concluidas", "Não Concluidas" }));
+        jComboBoxFiltroStatus.addItemListener(this::jComboBoxFiltroStatusItemStateChanged);
+        jComboBoxFiltroStatus.addActionListener(this::jComboBoxFiltroStatusActionPerformed);
 
         jTableTarefas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -75,6 +77,7 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTableTarefas);
 
         jButtonConcluirTarefa.setText("Concluir");
+        jButtonConcluirTarefa.addActionListener(this::jButtonConcluirTarefaActionPerformed);
 
         jButtonRemoverTarefa.setText("Remover");
         jButtonRemoverTarefa.addActionListener(this::jButtonRemoverTarefaActionPerformed);
@@ -168,6 +171,37 @@ public class Tela_To_Do_List extends javax.swing.JFrame {
 
         preencherTabela();
     }//GEN-LAST:event_jButtonRemoverTarefaActionPerformed
+
+    private void jButtonConcluirTarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConcluirTarefaActionPerformed
+        int linhaSelecionada = jTableTarefas.getSelectedRow();
+        
+        if (linhaSelecionada <0) {
+            JOptionPane.showMessageDialog(null, "nenhuma tarefa selacionada");
+            return;
+        }
+        
+        String tarefaSelecionada =recuperarTarefa (linhaSelecionada);
+        
+        int indiceTarefaSelecionada = tarefas.indexOf(tarefaSelecionada);
+        
+        String[] dados = tarefas.get(indiceTarefaSelecionada).split((";"));
+        
+        tarefas.set(indiceTarefaSelecionada, dados[0] + ";" + CONCLUIDA);
+        
+        filtraTabela();
+        
+        preencherTabela();
+    }//GEN-LAST:event_jButtonConcluirTarefaActionPerformed
+
+    private void jComboBoxFiltroStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFiltroStatusActionPerformed
+        
+    }//GEN-LAST:event_jComboBoxFiltroStatusActionPerformed
+
+    private void jComboBoxFiltroStatusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxFiltroStatusItemStateChanged
+      filtraTabela();
+      
+      preencherTabela();
+    }//GEN-LAST:event_jComboBoxFiltroStatusItemStateChanged
 
     private void filtraTabela() {
         int opcao = jComboBoxFiltroStatus.getSelectedIndex();

@@ -96,6 +96,10 @@
           </StringArray>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jComboBoxFiltroStatusItemStateChanged"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxFiltroStatusActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
@@ -123,6 +127,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Concluir"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonConcluirTarefaActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButtonRemoverTarefa">
       <Properties>
